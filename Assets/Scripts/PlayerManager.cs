@@ -9,13 +9,18 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private float _sideSpeed;
     private BoxCollider _collider;
     private int _heightLevel;
+
     [SerializeField] private GameObject _rollingBarrel;
     private Stack<GameObject> _barrelList = new Stack<GameObject>();
+
     private bool _isFlying;
     private float _balloonTimer;
     [SerializeField] private float _balloonTimerLimit;
+
     private bool _isRunning;
+
     Animator _animator;
+
     [SerializeField] Canvas _canvas;
     [SerializeField] private UIManager UI;
 
@@ -28,7 +33,6 @@ public class PlayerManager : MonoBehaviour
         _isFlying = false;
         _isRunning = false;
         _animator = GetComponent<Animator>();
-        //UI.PlayUI();
     }
 
     public void Play()
@@ -40,15 +44,9 @@ public class PlayerManager : MonoBehaviour
 
     private void Die()
     {
-        //Debug.Log("PERDU");
         _isRunning = false;
         _animator.SetBool("isDead", true);
         UI.RestartUI();
-        //_canvas.gameObject.SetActive(true);
-        //var buttonPlay = GameObject.Find("Button_Play");
-        //buttonPlay.SetActive(false);
-        //var buttonRestart = GameObject.Find("Button_Restart");
-        //buttonRestart.SetActive(true);
     }
 
     // Update is called once per frame
@@ -65,17 +63,17 @@ public class PlayerManager : MonoBehaviour
                 Touch touch = Input.touches[0];
                 if (touch.deltaPosition.x > 0)
                 {
-                    //this.gameObject.transform.Translate(Vector3.right * Time.deltaTime * _sideSpeed);
                     this.gameObject.transform.Translate(Vector3.right * touch.deltaPosition / Screen.width * Time.deltaTime * _sideSpeed);
                 }
                 else if (touch.deltaPosition.x < 0)
                 {
-                    //this.gameObject.transform.Translate(Vector3.left * Time.deltaTime * _sideSpeed);
                     this.gameObject.transform.Translate(Vector3.right * touch.deltaPosition / Screen.width * Time.deltaTime * _sideSpeed);
                 }
 
                 transform.position = new Vector3(Mathf.Clamp(transform.position.x, -3, 2.5f), transform.position.y, transform.position.z);
             }
+
+            /// Flying timer ///
 
             if (_isFlying)
             {
@@ -96,7 +94,6 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.CompareTag("Barrel"))
         {
-            //Debug.Log("COLLISION BARREL");
             _heightLevel++;
             GameObject instance = Instantiate(_rollingBarrel, this.gameObject.transform.position + new Vector3(0, 0.8f - 1.5f * _heightLevel, 0), Quaternion.identity);
             instance.transform.SetParent(this.transform);
@@ -107,7 +104,6 @@ public class PlayerManager : MonoBehaviour
         else if (other.CompareTag("Obstacle") && (!_isFlying))
         {
             int obstacleHeight = other.GetComponent<Obstacle>().Height;
-            //Debug.Log("COLLISION OBSTACLE : " + obstacleHeight);
             if (obstacleHeight > _heightLevel)
             {
                 Die();
@@ -128,7 +124,6 @@ public class PlayerManager : MonoBehaviour
         {
             _isFlying = true;
             _animator.SetBool("isFlying", true);
-            //Debug.Log("COLLISION BALLOON");
             foreach (GameObject barrel in _barrelList)
             {
                 Destroy(barrel.gameObject);
@@ -151,6 +146,7 @@ public class PlayerManager : MonoBehaviour
             UI.RestartUI();
         }
 
-        //Debug.Log(_barrelList.Count + " | height = " + _heightLevel);
+        // At the end of the loop the other collider is either disabled or has been destroyed
+        // This way the same collider won't be considered in the next frame
     }
 }

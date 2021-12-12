@@ -7,14 +7,14 @@ public class UIManager : MonoBehaviour
 {
     private Button _restartButton;
     private Button _playButton;
-    [SerializeField] private Text _gemCount;
+    [SerializeField] private Text _gemCountText;
 
     private void Start()
     {
         Button[] buttonList = GetComponentsInChildren<Button>(true);
         _playButton = buttonList[0];
         _restartButton = buttonList[1];
-        _gemCount.text = StoreManager.Instance.GemCount.ToString();
+        _gemCountText.text = StoreManager.Instance.GemCount.ToString();
         PlayUI();
     }
     public void RestartUI()
@@ -37,6 +37,6 @@ public class UIManager : MonoBehaviour
 
     public void SetGemCount()
     {
-        _gemCount.text = StoreManager.Instance.GemCount.ToString();
+        _gemCountText.text = StoreManager.Instance.GemCount.ToString();
     }
 }
